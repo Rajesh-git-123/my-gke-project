@@ -48,10 +48,10 @@ jobs:
 
     - name: Install GKE gcloud auth plugin
       run: |
-        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
-        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
-        sudo apt-get update
-        sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
+         sudo rm -f /usr/share/keyrings/cloud.google.gpg
+         curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
+         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
+         sudo apt-get update
 
     - name: Get GKE credentials
       run: |
