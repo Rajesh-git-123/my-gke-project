@@ -47,11 +47,18 @@ jobs:
         credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
     - name: Install GKE gcloud auth plugin
+    - name: Add Google Cloud public key from secret
       run: |
-         sudo rm -f /usr/share/keyrings/cloud.google.gpg
-         curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
-         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
-         sudo apt-get update
+        echo "${{ secrets.GCLOUD_PUBLIC_KEY }}" | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
+
+    - name: Add Google Cloud SDK repo
+      run: |
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
+
+    - name: Update apt and install GKE plugin
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
 
     - name: Get GKE credentials
       run: |
