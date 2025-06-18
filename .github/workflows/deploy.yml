@@ -37,7 +37,7 @@ jobs:
 
     - name: Package and upload Helm chart
       run: |
-        cd helm/frontend
+        cd frontend-chart
         helm package .
         jfrog rt u "frontend-*.tgz" $HELM_REPO/
 
