@@ -8,9 +8,9 @@ env:
   JFROG_REGISTRY: trialt71vbo.jfrog.io
   IMAGE_NAME: dev-ui-docker-local/user-form-frontend
   HELM_REPO: dev-ui-helm-local
-  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-  CLUSTER_NAME: ${{ vars.GKE_CLUSTER }}
-  GKE_ZONE: ${{ vars.GKE_ZONE }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  CLUSTER_NAME: ${{ secrets.GKE_CLUSTER }}
+  GKE_ZONE: ${{ secrets.GKE_ZONE }}
 
 jobs:
   deploy:
