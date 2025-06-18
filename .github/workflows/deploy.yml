@@ -41,17 +41,15 @@ jobs:
         helm package .
         jfrog rt u "frontend-*.tgz" $HELM_REPO/
 
-   # - name: Authenticate to GCP
-   #   uses: google-github-actions/auth@v2
-   #   with:
-   #     credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+   
     - name: Setup Google Cloud SDK and authenticate
       uses: google-github-actions/setup-gcloud@v1
       with:
         project_id: ${{ env.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
         install_components: gke-gcloud-auth-plugin
 
     - name: Get GKE credentials
