@@ -8,9 +8,9 @@ env:
   JFROG_REGISTRY: trialt71vbo.jfrog.io
   IMAGE_NAME: dev-ui-docker-local/user-form-frontend
   HELM_REPO: dev-ui-helm-local
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  CLUSTER_NAME: ${{ secrets.GKE_CLUSTER }}
-  GKE_ZONE: ${{ secrets.GKE_ZONE }}
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  CLUSTER_NAME: ${{ vars.CLUSTER_NAME }}
+  GKE_ZONE: ${{ vars.GKE_ZONE }}
 
 jobs:
   deploy:
@@ -48,9 +48,9 @@ jobs:
 
     - name: Get GKE credentials
       run: |
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} \
-          --zone ${{ secrets.GKE_ZONE }} \
-          --project ${{ secrets.GCP_PROJECT_ID }}
+        gcloud container clusters get-credentials $CLUSTER_NAME \
+        --zone $GKE_ZONE \
+        --project $GCP_PROJECT_ID
 
     - name: Create imagePullSecret in GKE
       run: |
