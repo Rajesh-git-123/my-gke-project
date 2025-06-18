@@ -1,0 +1,13 @@
+replicaCount: 1
+
+image:
+  repository: trialt71vbo.jfrog.io/dev-ui-docker-local/user-form-frontend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  - name: jfrog-secret
+
+service:
+  type: LoadBalancer   # or ClusterIP / NodePort as needed
+  port: 80
