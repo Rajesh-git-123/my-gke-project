@@ -48,7 +48,8 @@ jobs:
 
     - name: Install GKE gcloud auth plugin
       run: |
-        sudo apt-get install google-cloud-cli-gke-gcloud-auth-plugin
+        gcloud components update --quiet
+        gcloud components install gke-gcloud-auth-plugin --quiet
 
     - name: Get GKE credentials
       run: |
