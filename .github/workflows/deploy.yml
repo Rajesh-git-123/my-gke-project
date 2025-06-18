@@ -48,7 +48,10 @@ jobs:
 
     - name: Install gke-gcloud-auth-plugin using gcloud components
       run: |
-       sudo apt-get update && sudo apt-get --only-upgrade install google-cloud-cli-anthoscli google-cloud-cli-istioctl google-cloud-cli-app-engine-java google-cloud-cli-docker-credential-gcr google-cloud-cli-kubectl-oidc google-cloud-cli-datastore-emulator google-cloud-cli-skaffold google-cloud-cli-kpt kubectl google-cloud-cli-firestore-emulator google-cloud-cli google-cloud-cli-spanner-migration-tool google-cloud-cli-app-engine-python-extras google-cloud-cli-nomos google-cloud-cli-spanner-emulator google-cloud-cli-app-engine-python google-cloud-cli-cloud-build-local google-cloud-cli-local-extract google-cloud-cli-config-connector google-cloud-cli-enterprise-certificate-proxy google-cloud-cli-terraform-tools google-cloud-cli-bigtable-emulator google-cloud-cli-cloud-run-proxy google-cloud-cli-app-engine-grpc google-cloud-cli-cbt google-cloud-cli-managed-flink-client google-cloud-cli-minikube google-cloud-cli-package-go-module google-cloud-cli-pubsub-emulator google-cloud-cli-gke-gcloud-auth-plugin google-cloud-cli-ap
+       curl -sSL https://sdk.cloud.google.com | bash
+       source $HOME/google-cloud-sdk/path.bash.inc
+       gcloud --quiet components update
+       gcloud --quiet components install gke-gcloud-auth-plugin
 
     - name: Get GKE credentials
       run: |
