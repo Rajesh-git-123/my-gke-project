@@ -1,0 +1,70 @@
+name: Deploy Frontend to GKE
+
+on:
+  push:
+    branches: [main]
+
+env:
+  JFROG_REGISTRY: trialt71vbo.jfrog.io
+  IMAGE_NAME: dev-ui-docker-local/user-form-frontend
+  HELM_REPO: dev-ui-helm-local
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  CLUSTER_NAME: ${{ vars.GKE_CLUSTER }}
+  GKE_ZONE: ${{ vars.GKE_ZONE }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Authenticate to JFrog Docker registry
+      run: echo "${{ secrets.JFROG_API_KEY }}" | docker login $JFROG_REGISTRY -u "${{ secrets.JFROG_USER }}" --password-stdin
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t $JFROG_REGISTRY/$IMAGE_NAME:latest ./frontend
+        docker push $JFROG_REGISTRY/$IMAGE_NAME:latest
+
+    - name: Install Helm and JFrog CLI
+      run: |
+        curl -fL https://getcli.jfrog.io | sh
+        sudo mv jfrog /usr/local/bin/
+        jfrog config add jfrog-server --url=https://$JFROG_REGISTRY --user=${{ secrets.JFROG_USER }} --password=${{ secrets.JFROG_API_KEY }} --interactive=false
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+    - name: Package and upload Helm chart
+      run: |
+        cd helm/frontend
+        helm package .
+        jfrog rt u "frontend-*.tgz" $HELM_REPO/
+
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials $CLUSTER_NAME --zone $GKE_ZONE --project $GCP_PROJECT_ID
+
+    - name: Create imagePullSecret in GKE
+      run: |
+        kubectl create secret docker-registry jfrog-secret \
+          --docker-server=$JFROG_REGISTRY \
+          --docker-username=${{ secrets.JFROG_USER }} \
+          --docker-password=${{ secrets.JFROG_API_KEY }} \
+          --docker-email=${{ secrets.JFROG_USER }} \
+          --namespace front-end --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Deploy to GKE using Helm
+      run: |
+        helm upgrade --install frontend ./helm/frontend \
+          --namespace front-end \
+          --set image.repository=$JFROG_REGISTRY/$IMAGE_NAME \
+          --set image.tag=latest \
+          --set imagePullSecrets[0].name=jfrog-secret \
+          --set service.type=LoadBalancer \
+          --set service.port=80
