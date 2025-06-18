@@ -46,16 +46,11 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
-    - name: Add Google Cloud public key from secret
+    - name: Add missing Google Cloud public key
       run: |
-        printf '%s\n' "${{ secrets.GCLOUD_PUBLIC_KEY }}" | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C0BA5CE6DC6315A3
 
-    - name: Add Google Cloud SDK repo
-      run: |
-        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
-
-
-    - name: Update apt and install GKE plugin
+    - name: Update apt and install GKE auth plugin
       run: |
         sudo apt-get update
         sudo apt-get install -y google-cloud-cli-gke-gcloud-auth-plugin
@@ -84,3 +79,4 @@ jobs:
           --set imagePullSecrets[0].name=jfrog-secret \
           --set service.type=LoadBalancer \
           --set service.port=80
+          
