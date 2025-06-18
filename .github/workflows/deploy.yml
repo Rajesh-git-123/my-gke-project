@@ -48,11 +48,12 @@ jobs:
 
     - name: Add Google Cloud public key from secret
       run: |
-        echo "${{ secrets.GCLOUD_PUBLIC_KEY }}" | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
+        printf '%s\n' "${{ secrets.GCLOUD_PUBLIC_KEY }}" | sudo tee /usr/share/keyrings/cloud.google.gpg > /dev/null
 
     - name: Add Google Cloud SDK repo
       run: |
         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list
+
 
     - name: Update apt and install GKE plugin
       run: |
