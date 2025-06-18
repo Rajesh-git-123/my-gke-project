@@ -69,7 +69,7 @@ jobs:
 
     - name: Deploy to GKE using Helm
       run: |
-        helm upgrade --install frontend ./helm/frontend \
+        helm upgrade --install frontend ./frontend-chart \
           --namespace front-end \
           --set image.repository=$JFROG_REGISTRY/$IMAGE_NAME \
           --set image.tag=latest \
