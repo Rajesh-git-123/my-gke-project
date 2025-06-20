@@ -1,8 +1,7 @@
 name: Deploy Frontend to GKE
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 env:
   JFROG_REGISTRY: trialt71vbo.jfrog.io
