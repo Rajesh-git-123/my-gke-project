@@ -1,0 +1,38 @@
+name: Deploy Istio to GKE
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-istio:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ vars.GCP_PROJECT_ID }}
+
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials ${{ vars.CLUSTER_NAME }} --zone ${{ vars.GKE_ZONE }}
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+    - name: Add Istio repo and install
+      run: |
+        helm repo add istio https://istio-release.storage.googleapis.com/charts
+        helm repo update
+        helm install istio-base istio/base -n istio-system
+        helm install istiod istio/istiod -n istio-system
+        helm install istio-ingressgateway istio/gateway -n istio-system
