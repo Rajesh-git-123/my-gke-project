@@ -20,10 +20,13 @@ jobs:
       uses: google-github-actions/setup-gcloud@v1
       with:
         project_id: ${{ vars.GCP_PROJECT_ID }}
+        install_components: gke-gcloud-auth-plugin
 
     - name: Get GKE credentials
       run: |
-        gcloud container clusters get-credentials ${{ vars.CLUSTER_NAME }} --zone ${{ vars.GKE_ZONE }}
+        gcloud container clusters get-credentials ${{ vars.CLUSTER_NAME }} 
+        --zone ${{ vars.GKE_ZONE }} \
+        --project ${{ vars.GCP_PROJECT_ID }}
 
     - name: Install Helm
       run: |
