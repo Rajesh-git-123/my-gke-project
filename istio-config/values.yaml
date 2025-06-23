@@ -1,0 +1,12 @@
+gateway:
+  name: frontend-gateway
+  namespace: istio-system
+  hosts:
+    - "myistio-dev-ui.duckdns.org" 
+
+virtualService:
+  name: frontend-virtualservice
+  namespace: front-end
+  service:
+    name: frontend
+    port: 80

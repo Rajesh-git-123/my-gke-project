@@ -1,0 +1,5 @@
+apiVersion: v2
+name: istio-config
+description: Istio Gateway and VirtualService for frontend
+version: 0.1.0
+appVersion: "1.0"

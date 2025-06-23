@@ -1,0 +1,40 @@
+name: Deploy Istio Gateway and VirtualService
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-istio-config:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ vars.GCP_PROJECT_ID }}
+        install_components: gke-gcloud-auth-plugin
+
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials ${{ vars.CLUSTER_NAME }} \
+        --zone ${{ vars.GKE_ZONE }} \
+        --project ${{ vars.GCP_PROJECT_ID }}
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+    - name: Deploy Istio Gateway and VirtualService
+      run: |
+        helm upgrade --install istio-config ./istio-config \
+          --namespace front-end \
+          --create-namespace \
+          --values ./istio-config/values.yaml
