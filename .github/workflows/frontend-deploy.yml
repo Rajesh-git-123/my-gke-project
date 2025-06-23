@@ -75,5 +75,5 @@ jobs:
       run: |
         COMMIT_HASH=$(git rev-parse --short HEAD)
         helm upgrade --install frontend ./frontend-chart \
-          --namespace front-end
+        --namespace front-end
           
