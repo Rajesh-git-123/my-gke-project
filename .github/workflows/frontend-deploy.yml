@@ -66,15 +66,14 @@ jobs:
           --docker-password=${{ secrets.JFROG_API_KEY }} \
           --docker-email=${{ secrets.JFROG_USER }} \
           --namespace front-end --dry-run=client -o yaml | kubectl apply -f -
+    
+    - name: Enable Istio sidecar injection
+      run: |
+        kubectl label namespace front-end istio-injection=enabled --overwrite
 
     - name: Deploy to GKE using Helm
       run: |
         COMMIT_HASH=$(git rev-parse --short HEAD)
         helm upgrade --install frontend ./frontend-chart \
-          --namespace front-end \
-          --set image.repository=$JFROG_REGISTRY/$IMAGE_NAME \
-          --set image.tag=$COMMIT_HASH \
-          --set imagePullSecrets[0].name=jfrog-secret \
-          --set service.type=LoadBalancer \
-          --set service.port=80
+          --namespace front-end
           
