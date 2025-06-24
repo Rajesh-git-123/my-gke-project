@@ -4,6 +4,8 @@ metadata:
   name: {{ .Values.virtualService.name }}
   namespace: {{ .Values.virtualService.namespace }}
 spec:
+  exportTo:
+    - "*"
   hosts:
     - {{ .Values.gateway.hosts | first | quote }}
   gateways:
@@ -14,6 +16,6 @@ spec:
             prefix: /
       route:
         - destination:
-            host: {{ .Values.virtualService.service.name }}
+            host: {{ printf "%s.%s.svc.cluster.local" .Values.virtualService.service.name .Values.virtualService.namespace }}
             port:
               number: {{ .Values.virtualService.service.port }}
