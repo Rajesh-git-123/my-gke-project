@@ -12,17 +12,17 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        {{- range .Values.gateway.hosts }}
-          - {{ . | quote }}
-        {{- end }}
+{{- range .Values.gateway.hosts }}
+        - {{ . | quote }}
+{{- end }}
     - port:
         number: 443
         name: https
         protocol: HTTPS
       hosts:
-        {{- range .Values.gateway.hosts }}
-          - {{ . | quote }}
-        {{- end }}
+{{- range .Values.gateway.hosts }}
+        - {{ . | quote }}
+{{- end }}
       tls:
         mode: SIMPLE
         credentialName: myistio-cert-secret
